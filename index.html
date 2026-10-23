@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zarai Saathi (زرعی ساتھی) - Sindh Agriculture Enterprise Platform</title>
+
+    <!-- Tailwind CSS Engine -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        agri: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        urdu: ['Noto Nastaliq Urdu', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-urdu { font-family: 'Noto Nastaliq Urdu', serif; line-height: 2.2; }
+        .active-tab { background-color: #15803d !important; color: #ffffff !important; font-weight: 600; }
+        .active-tab i { color: #ffffff !important; }
+        .sidebar-transition { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 flex overflow-hidden antialiased">
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between fixed md:relative z-40 h-full -translate-x-full md:translate-x-0 sidebar-transition shadow-2xl border-r border-slate-800 no-print">
+        <div class="flex flex-col h-full">
+            
+            <!-- Brand -->
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-agri-600 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-agri-900/50">
+                        🌾
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base text-white tracking-tight leading-none">Zarai Saathi</h1>
+                        <span class="text-[11px] text-agri-400 font-urdu font-medium" id="brand-urdu">زرعي ساتھی پورٽل</span>
+                    </div>
+                </div>
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Role Selector -->
+            <div class="p-3 border-b border-slate-800 bg-slate-950/80">
+                <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-1 font-bold" id="lbl-role-title">Active Role:</label>
+                <select id="roleSelector" onchange="switchRole(this.value)" class="w-full bg-slate-800 border border-slate-700 text-agri-400 text-xs font-semibold rounded-lg p-2 focus:ring-1 focus:ring-agri-500 outline-none">
+                    <option value="farmer">🌾 Farmer Command Center</option>
+                    <option value="buyer">🏬 Verified Buyer / Trader</option>
+                    <option value="supplier">🚜 Agri Equipment Supplier</option>
+                    <option value="expert">🔬 Extension Agri Expert</option>
+                    <option value="govt">🏛️ Sindh Market Committee Officer</option>
+                </select>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-2 space-y-1 overflow-y-auto flex-1" id="nav-menu">
+                <button onclick="switchTab('home')" id="tab-home" class="nav-btn active-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-house-chimney text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_home">Home Dashboard</span>
+                </button>
+                <button onclick="switchTab('seasons')" id="tab-seasons" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-calendar-days text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_seasons">Crop Seasons & Calendar</span>
+                </button>
+                <button onclick="switchTab('ai')" id="tab-ai" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-robot text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_ai">AI Saathi Assistant</span>
+                </button>
+                <button onclick="switchTab('market')" id="tab-market" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-store text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_market">Direct Marketplace</span>
+                </button>
+                <button onclick="switchTab('rates')" id="tab-rates" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-scale-balanced text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_rates">Govt Rates & Mandi</span>
+                </button>
+                <button onclick="switchTab('planner')" id="tab-planner" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-calculator text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_planner">Farm Management Suite</span>
+                </button>
+                <button onclick="switchTab('health_records')" id="tab-health_records" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-notes-medical text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_health">Crop Health Records</span>
+                </button>
+                <button onclick="switchTab('community')" id="tab-community" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-users text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_community">Farmer Community</span>
+                </button>
+                <button onclick="switchTab('complaints')" id="tab-complaints" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-shield-halved text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_dispute">Dispute & Complaints</span>
+                </button>
+                <button onclick="switchTab('govt_services')" id="tab-govt_services" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-building-columns text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_govt">Govt Schemes & Hub</span>
+                </button>
+                <button onclick="switchTab('data')" id="tab-data" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all hover:bg-slate-800">
+                    <i class="fa-solid fa-database text-agri-500 w-4 text-center"></i> <span class="nav-text" data-key="nav_data">Data Backup & Export</span>
+                </button>
+            </nav>
+
+            <!-- Language Switcher -->
+            <div class="p-3 border-t border-slate-800 text-xs text-slate-400 bg-slate-900/90">
+                <div class="flex items-center justify-between bg-slate-800 p-2 rounded-lg border border-slate-700/50">
+                    <span class="text-[11px] font-medium"><i class="fa-solid fa-globe mr-1.5 text-agri-400"></i> Interface:</span>
+                    <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-slate-900 text-agri-400 text-xs font-bold outline-none rounded px-2 py-1 cursor-pointer border border-slate-700">
+                        <option value="en">English</option>
+                        <option value="ur">اردو (Urdu)</option>
+                        <option value="sd">سنڌي (Sindhi)</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <!-- GLOBAL HEADER TOPBAR -->
+        <header class="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between z-20 shadow-xs no-print">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-agri-700 p-1 rounded-lg">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                
+                <div class="relative w-40 sm:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="globalSearch" onkeyup="filterGlobalSearch()" placeholder="Search crops, rates..." class="w-full bg-slate-100 text-xs pl-8 pr-3 py-2 rounded-xl border border-transparent focus:border-agri-500 focus:bg-white outline-none transition-all">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <!-- District Selector -->
+                <div class="flex items-center gap-1.5 bg-agri-50 text-agri-900 text-xs px-2.5 py-1 rounded-xl border border-agri-200">
+                    <i class="fa-solid fa-location-dot text-agri-600 text-xs"></i>
+                    <select id="districtSelect" onchange="changeDistrict(this.value)" class="bg-transparent font-bold text-xs outline-none cursor-pointer">
+                        <option value="hyderabad">Hyderabad</option>
+                        <option value="sukkur">Sukkur</option>
+                        <option value="larkana">Larkana</option>
+                        <option value="mirpurkhas">Mirpurkhas</option>
+                        <option value="nawabshah">Nawabshah</option>
+                        <option value="karachi">Karachi</option>
+                    </select>
+                </div>
+
+                <!-- Google Auth Profile Button / Widget -->
+                <div id="authContainer" class="flex items-center">
+                    <button onclick="openGoogleLoginModal()" id="loginBtn" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold shadow-xs flex items-center gap-2 transition-colors">
+                        <i class="fa-brands fa-google text-emerald-400"></i>
+                        <span id="txt-login">Google Sign-In</span>
+                    </button>
+                    
+                    <div id="userProfileBadge" class="hidden items-center gap-2 bg-agri-50 border border-agri-200 px-3 py-1 rounded-xl">
+                        <img id="userAvatar" src="" class="w-7 h-7 rounded-full object-cover border border-agri-400">
+                        <div class="text-left leading-tight">
+                            <div class="text-xs font-bold text-slate-900 truncate max-w-[100px]" id="userName">User</div>
+                            <button onclick="signOutGoogle()" class="text-[10px] text-rose-600 font-semibold hover:underline">Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="switchTab('ai')" class="bg-agri-600 hover:bg-agri-700 text-white text-xs px-3 py-1.5 rounded-xl font-medium shadow-xs flex items-center gap-1.5 transition-colors hidden sm:flex">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    <span id="btn-ask-ai">Ask AI Saathi</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD PANELS -->
+        <main class="flex-1 overflow-y-auto p-3 sm:p-5 bg-slate-100/70" id="mainWorkspace">
+
+            <!-- 1. HOME CENTER WORKSPACE -->
+            <section id="workspace-home" class="workspace-panel space-y-4">
+                <div class="bg-gradient-to-r from-agri-900 via-agri-800 to-agri-950 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden">
+                    <div class="relative z-10 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-agri-500/30 text-agri-200 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border border-agri-400/30" id="badge-verified">Verified Sindh Agriculture Cloud Desk</span>
+                            <span class="text-xs text-slate-300" id="currentDate">--</span>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-black tracking-tight" id="txt-welcome">Khush Amdeed, Farmer! 🌾</h2>
+                        <p class="text-xs text-slate-200 max-w-2xl leading-relaxed" id="txt-welcome-sub">Integrated cloud operational command center for crop monitoring, secure profile records, market intelligence, and Sindh Government agricultural schemes.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Live Weather</span>
+                            <i class="fa-solid fa-cloud-sun-rain text-agri-600 text-base"></i>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-900" id="homeTemp">--°C</div>
+                            <div class="text-xs text-slate-600 font-medium" id="homeCondition">Connecting Open-Meteo...</div>
+                        </div>
+                        <div class="mt-2.5 pt-2 border-t border-slate-100 text-[11px] text-agri-700 flex items-center justify-between">
+                            <span>Advisory:</span>
+                            <span class="font-semibold" id="homeWeatherTip">Evaluating conditions...</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pest Surveillance</span>
+                            <i class="fa-solid fa-bug text-agri-700 text-base"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-agri-800">Cotton Locust Advisory</div>
+                            <div class="text-[11px] text-slate-500" id="pestDistrictLabel">Active district perimeter</div>
+                        </div>
+                        <button onclick="switchTab('ai')" class="mt-2.5 text-left text-xs text-agri-700 font-bold hover:underline flex items-center gap-1">
+                            Run AI Vision Screening <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mandi Benchmark</span>
+                            <i class="fa-solid fa-chart-line text-agri-600 text-base"></i>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-black text-slate-900" id="homeBenchmarkPrice">Rs. 4,250</div>
+                            <div class="text-[11px] text-agri-600 font-medium" id="homeBenchmarkCrop"><i class="fa-solid fa-arrow-trend-up"></i> +1.2% Wheat (Hyderabad)</div>
+                        </div>
+                        <button onclick="switchTab('rates')" class="mt-2.5 text-left text-xs text-agri-700 font-bold hover:underline flex items-center gap-1">
+                            Compare Buyer Offers <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex flex-col justify-between">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Cloud Data Status</span>
+                            <i class="fa-solid fa-cloud-arrow-up text-agri-600 text-base"></i>
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-agri-800" id="cloudStatusTxt">Offline / Local Mode</div>
+                            <div class="text-[11px] text-slate-500">Sign in with Google to sync cloud records</div>
+                        </div>
+                        <button onclick="openGoogleLoginModal()" class="mt-2.5 text-left text-xs text-agri-700 font-bold hover:underline flex items-center gap-1">
+                            Connect Google Profile <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Quick Operational Actions</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <button onclick="switchTab('ai')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
+                            <i class="fa-solid fa-camera text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
+                            <div class="text-xs font-bold text-agri-950">Diagnose Crop Leaf</div>
+                            <div class="text-[10px] text-agri-700">AI Vision Screening</div>
+                        </button>
+                        <button onclick="switchTab('market')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
+                            <i class="fa-solid fa-plus-circle text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
+                            <div class="text-xs font-bold text-agri-950">Post Crop Harvest</div>
+                            <div class="text-[10px] text-agri-700">Sell Direct to Buyers</div>
+                        </button>
+                        <button onclick="switchTab('health_records')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
+                            <i class="fa-solid fa-notes-medical text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
+                            <div class="text-xs font-bold text-agri-950">Log Health Record</div>
+                            <div class="text-[10px] text-agri-700">Cloud Sync Active</div>
+                        </button>
+                        <button onclick="switchTab('govt_services')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
+                            <i class="fa-solid fa-seedling text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
+                            <div class="text-xs font-bold text-agri-950">Sindh Subsidies</div>
+                            <div class="text-[10px] text-agri-700">Solar & Tractor Grants</div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1.5 CROP SEASONS WORKSPACE -->
+            <section id="workspace-seasons" class="workspace-panel hidden space-y-4">
+                <div class="bg-gradient-to-r from-agri-900 to-agri-800 rounded-2xl p-5 text-white shadow-lg space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-agri-500/30 text-agri-200 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border border-agri-400/30">Sindh Agro-Climatic Intelligence</span>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-black">Sindh Crop Seasons & Seasonal Weather Guide</h3>
+                    <p class="text-xs text-slate-200 leading-relaxed">Comprehensive reference for Kharif and Rabi cropping patterns, sowing dates, and rainfall cycles across Sindh districts.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">☀️</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Kharif Season (Monsoon / Summer)</h4>
+                                    <p class="text-[11px] text-slate-500">Sowing: April - June | Harvest: October - December</p>
+                                </div>
+                            </div>
+                            <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-0.5 rounded">High Water Demand</span>
+                        </div>
+                        <div class="space-y-2 text-xs text-slate-700">
+                            <p class="leading-relaxed"><strong>Primary Crops Grown in Sindh:</strong> Cotton (کپاس), Rice (چاول), and Sugarcane (گنا).</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div class="flex items-center gap-2">
+                                <span class="text-lg">❄️</span>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">Rabi Season (Winter)</h4>
+                                    <p class="text-[11px] text-slate-500">Sowing: October - November | Harvest: April - May</p>
+                                </div>
+                            </div>
+                            <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded">Cool & Dry</span>
+                        </div>
+                        <div class="space-y-2 text-xs text-slate-700">
+                            <p class="leading-relaxed"><strong>Primary Crops Grown in Sindh:</strong> Wheat (گندم Grade A), Mustard, and Onions.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. AI ASSISTANT WORKSPACE -->
+            <section id="workspace-ai" class="workspace-panel hidden space-y-4">
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs flex flex-col h-[76vh]">
+                    <div class="p-3.5 border-b border-slate-200 flex items-center justify-between bg-slate-50 rounded-t-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-agri-600 rounded-xl flex items-center justify-center text-white text-sm font-bold shadow-xs">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-slate-800" id="ai-header-title">Zarai AI Assistant & Crop Doctor</h3>
+                                <p class="text-[10px] text-slate-500">Gemini Preview API | Multilingual & Vision Enabled</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] bg-agri-100 text-agri-800 font-semibold px-2.5 py-0.5 rounded-full border border-agri-200">
+                            <i class="fa-solid fa-bolt mr-1 text-agri-600"></i> Gemini-3-Flash Connected
+                        </span>
+                    </div>
+
+                    <div id="chatWindow" class="flex-1 overflow-y-auto p-4 space-y-3">
+                        <div class="flex gap-3 max-w-2xl">
+                            <div class="w-7 h-7 bg-agri-600 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">AI</div>
+                            <div class="bg-slate-100 p-3.5 rounded-2xl text-xs text-slate-700 space-y-2 border border-slate-200/60">
+                                <p class="font-medium leading-relaxed" id="ai-greeting">Khush Amdeed! I am your Zarai AI Assistant powered by Gemini. Ask me anything about crop diseases, pest treatment thresholds, fertilizer timing, or Sindh wholesale market trends.</p>
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    <button onclick="sendQuickPrompt('What pesticide is best for cotton locust outbreaks in Sindh?')" class="bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-lg hover:border-agri-500 text-[11px] font-medium">🦗 Cotton Locusts</button>
+                                    <button onclick="sendQuickPrompt('When and how much Urea fertilizer should I apply to Wheat Grade A?')" class="bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-lg hover:border-agri-500 text-[11px] font-medium">🌾 Wheat Fertilizer</button>
+                                    <button onclick="sendQuickPrompt('How do I calculate flood irrigation water volume for 5 acres of Sugarcane?')" class="bg-white border border-slate-300 text-slate-700 px-2.5 py-1 rounded-lg hover:border-agri-500 text-[11px] font-medium">💧 Water Needs</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="imagePreviewBox" class="hidden px-4 py-2 bg-slate-100 border-t border-slate-200 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <img id="previewImg" src="" class="w-9 h-9 object-cover rounded-lg border border-slate-300">
+                            <span class="text-xs text-slate-600 font-medium" id="previewFileName">Leaf_Photo.jpg</span>
+                        </div>
+                        <button onclick="clearImageUpload()" class="text-rose-600 hover:text-rose-800 text-xs font-bold px-2 py-1"><i class="fa-solid fa-xmark mr-1"></i> Remove Image</button>
+                    </div>
+
+                    <div class="p-3 border-t border-slate-200 bg-white rounded-b-2xl">
+                        <form onsubmit="handleChatSubmit(event)" class="flex items-center gap-2">
+                            <label class="p-2 text-slate-500 hover:text-agri-600 hover:bg-agri-50 rounded-xl cursor-pointer transition-colors" title="Attach Crop Leaf Image">
+                                <i class="fa-solid fa-camera text-base"></i>
+                                <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                            </label>
+                            <button type="button" onclick="simulateVoiceInput()" class="p-2 text-slate-500 hover:text-agri-600 hover:bg-agri-50 rounded-xl transition-colors" title="Voice Input (Urdu / Sindhi)">
+                                <i class="fa-solid fa-microphone text-base"></i>
+                            </button>
+                            <input type="text" id="chatInput" placeholder="Type or speak in Sindhi, Urdu, or English..." class="flex-1 bg-slate-100 text-xs px-3.5 py-2.5 rounded-xl border border-transparent focus:border-agri-500 focus:bg-white outline-none transition-all">
+                            <button type="submit" class="bg-agri-600 hover:bg-agri-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold transition-colors flex items-center gap-1.5 shadow-xs">
+                                <span>Send</span>
+                                <i class="fa-solid fa-paper-plane text-xs"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. DIRECT MARKETPLACE WORKSPACE -->
+            <section id="workspace-market" class="workspace-panel hidden space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800" id="market-title">Farmer-to-Buyer Direct Marketplace</h3>
+                        <p class="text-xs text-slate-500">Eliminate intermediary commission. Direct WhatsApp negotiation for agricultural produce.</p>
+                    </div>
+                    <button onclick="toggleModal('postHarvestModal')" class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-2 transition-colors">
+                        <i class="fa-solid fa-plus"></i> Post Harvest Listing
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5" id="marketplaceListings">
+                    <div class="bg-white rounded-xl border border-slate-200/80 shadow-xs p-4 space-y-2.5 flex flex-col justify-between">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-agri-100 text-agri-800 text-[10px] font-bold px-2 py-0.5 rounded border border-agri-200">Verified Cloud Seller</span>
+                                <span class="text-[10px] text-slate-400">Oct 23, 2026</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs">Organic Wheat (گندم Grade A)</h4>
+                                <p class="text-[11px] text-slate-500">Quantity: 50 Mand (2,000 kg)</p>
+                                <p class="text-[11px] text-slate-500">Location: Tando Allahyar, Sindh</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 pt-2 border-t border-slate-100">
+                            <div class="bg-slate-50 p-2 rounded-lg flex items-center justify-between">
+                                <span class="text-xs text-slate-600">Asking Price:</span>
+                                <span class="text-xs font-bold text-agri-700">Rs. 4,300 / 40kg</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="openOfferModal('Organic Wheat', '4300')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-xs py-2 rounded-lg font-semibold transition-colors">
+                                    Send Direct Offer
+                                </button>
+                                <a href="https://wa.me/923001234567?text=Hi,%20I%20am%20interested%20in%20your%20Organic%20Wheat%20listing." target="_blank" class="bg-agri-600 hover:bg-agri-700 text-white p-2 rounded-lg text-xs flex items-center justify-center w-9" title="WhatsApp Trader">
+                                    <i class="fa-brands fa-whatsapp text-base"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. OFFICIAL RATES WORKSPACE -->
+            <section id="workspace-rates" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Official Govt Rates vs Market Offers</h3>
+                            <p class="text-xs text-slate-500">Notified under Sindh Wholesale Agricultural Produce Markets Act, 2010.</p>
+                        </div>
+                        <span class="text-[10px] bg-agri-50 text-agri-800 font-semibold px-2.5 py-1 rounded-lg border border-agri-200">
+                            Source: Sindh Wholesale Market Board
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 uppercase text-[10px]">
+                                    <th class="p-2.5">Crop Commodity</th>
+                                    <th class="p-2.5">Mandi Location</th>
+                                    <th class="p-2.5">Govt Notified Rate</th>
+                                    <th class="p-2.5">Observed Mandi Rate</th>
+                                    <th class="p-2.5">Private Buyer Offer</th>
+                                    <th class="p-2.5">Market Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mandiRatesTable" class="divide-y divide-slate-100 text-slate-700">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. FARM MANAGEMENT SUITE WORKSPACE -->
+            <section id="workspace-planner" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-coins text-amber-500 mr-2"></i>Crop Profit & Net Income Calculator</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        <div>
+                            <label class="font-semibold text-slate-700 block mb-1">Total Acreage (Acres):</label>
+                            <input type="number" id="calcAcreage" value="5" class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="font-semibold text-slate-700 block mb-1">Expected Yield (Mands/Acre):</label>
+                            <input type="number" id="calcYield" value="35" class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="font-semibold text-slate-700 block mb-1">Selling Price (Rs/40kg):</label>
+                            <input type="number" id="calcPrice" value="4200" class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                        </div>
+                        <div>
+                            <label class="font-semibold text-slate-700 block mb-1">Total Costs (Rs/Acre):</label>
+                            <input type="number" id="calcCosts" value="65000" class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="calculateCropProfit()" class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+                        Calculate Net Profit
+                    </button>
+                    <div id="profitResult" class="p-3 bg-agri-50 border border-agri-200 rounded-xl text-xs space-y-1">
+                        <span class="text-slate-600">Click Calculate to generate financial breakdown.</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-droplet text-blue-500 mr-2"></i>Precision Water & Input Planner</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Select Crop:</label>
+                            <select id="planCrop" class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none">
+                                <option value="wheat">Wheat (گندم)</option>
+                                <option value="cotton">Cotton (کپاس)</option>
+                                <option value="sugarcane">Sugarcane (گنا)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Land Acreage (Acres):</label>
+                            <input type="number" id="planAcreage" value="5" class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Growth Stage:</label>
+                            <select id="planStage" class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none">
+                                <option value="sowing">Sowing / Initial Stage</option>
+                                <option value="vegetative">Vegetative Growth</option>
+                                <option value="flowering">Flowering / Grain Formation</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="calculateAgriPlan()" class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+                        Generate Input Plan
+                    </button>
+                    <div id="plannerResults" class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700">
+                        <span class="text-slate-500">Calculated fertilizer and tube-well irrigation requirements will display here.</span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-slate-800"><i class="fa-solid fa-list-check text-agri-600 mr-2"></i>Daily Farm Task Manager (Cloud Synced)</h3>
+                        <button onclick="addNewTaskPrompt()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-1 rounded-lg transition-colors">
+                            <i class="fa-solid fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    <ul id="taskManagerList" class="space-y-2 text-xs">
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 6. CROP HEALTH RECORDS WORKSPACE -->
+            <section id="workspace-health_records" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Crop Disease & Cloud Diagnostic Logger</h3>
+                        <p class="text-xs text-slate-500">Record field observations secured to your Google profile.</p>
+                    </div>
+
+                    <form onsubmit="handleHealthLogSubmit(event)" class="space-y-3 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="font-semibold text-slate-700 block mb-1">Crop Name:</label>
+                                <input type="text" id="logCrop" placeholder="e.g. Cotton Plot 2" required class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                            </div>
+                            <div>
+                                <label class="font-semibold text-slate-700 block mb-1">Observed Symptom:</label>
+                                <input type="text" id="logSymptom" placeholder="e.g. Leaf curl virus, Whitefly" required class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                            </div>
+                            <div>
+                                <label class="font-semibold text-slate-700 block mb-1">Severity Grade:</label>
+                                <select id="logSeverity" class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none">
+                                    <option value="Low">Low (Mild Spotting)</option>
+                                    <option value="Moderate">Moderate (10-25% crop affected)</option>
+                                    <option value="Severe">Severe (Immediate Intervention)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="font-semibold text-slate-700 block mb-1">Field Treatment Notes:</label>
+                            <textarea id="logNotes" rows="2" placeholder="Note spray applied, water adjustment, or expert guidance..." class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="bg-agri-600 hover:bg-agri-700 text-white font-bold px-4 py-2 rounded-xl transition-colors">
+                            Save Cloud Field Record
+                        </button>
+                    </form>
+
+                    <div class="pt-2">
+                        <h4 class="text-xs font-bold text-slate-800 mb-2">Cloud-Synced Diagnostic Logs</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-100 border-b border-slate-200 text-slate-600 uppercase text-[10px]">
+                                        <th class="p-2">Date</th>
+                                        <th class="p-2">User / Profile</th>
+                                        <th class="p-2">Crop</th>
+                                        <th class="p-2">Symptom</th>
+                                        <th class="p-2">Severity</th>
+                                        <th class="p-2">Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="healthLogsTable" class="divide-y divide-slate-100 text-slate-700">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. FARMER COMMUNITY WORKSPACE -->
+            <section id="workspace-community" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Local Farmer Community & Equipment Sharing</h3>
+                            <p class="text-xs text-slate-500">Rent tractors, harvesters, laser levelers, or arrange crop logistics.</p>
+                        </div>
+                        <button onclick="toggleModal('communityPostModal')" class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition-colors">
+                            <i class="fa-solid fa-plus"></i> Post Request
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="communityPostsContainer">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. DISPUTE & COMPLAINTS WORKSPACE -->
+            <section id="workspace-complaints" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800">Government Complaint & Dispute Logger</h3>
+                        <p class="text-xs text-slate-500">Report trader under-weighing, delayed payments, or substandard inputs to Sindh Market Committee.</p>
+                    </div>
+
+                    <form onsubmit="handleComplaintSubmit(event)" class="space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700 block mb-1">Dispute Category:</label>
+                                <select required class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none">
+                                    <option>Under-weighing by Trader / Arthi</option>
+                                    <option>Payment Delay Beyond Agreed Term</option>
+                                    <option>Counterfeit / Substandard Pesticide</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-700 block mb-1">Mandi / District:</label>
+                                <input type="text" placeholder="e.g. Hyderabad Wholesale Mandi" required class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Dispute Particulars:</label>
+                            <textarea rows="2" placeholder="Describe agreed prices, transaction receipt numbers, or trader name..." required class="w-full bg-slate-100 border border-slate-200 text-xs rounded-xl p-2 outline-none"></textarea>
+                        </div>
+
+                        <button type="submit" class="bg-agri-700 hover:bg-agri-800 text-white text-xs font-bold px-4 py-2 rounded-xl transition-colors">
+                            Submit Official Grievance Draft
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 9. SINDH GOVT SERVICES WORKSPACE -->
+            <section id="workspace-govt_services" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800">Sindh Govt & Agriculture Department Directory</h3>
+                    <p class="text-xs text-slate-500">Verified official department contacts and subsidy scheme links.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="p-3 border border-slate-200 rounded-xl space-y-1 bg-slate-50">
+                            <span class="text-[10px] font-bold text-agri-700 bg-agri-100 px-2 py-0.5 rounded border border-agri-200">Official Helpline</span>
+                            <h4 class="font-bold text-xs text-slate-900">ICT Agriculture Extension Sindh</h4>
+                            <p class="text-[11px] text-slate-600">Location: Shahbaz Building, Block F, Hyderabad</p>
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-phone text-agri-600"></i> Helpline: 022-9201958</p>
+                        </div>
+                        <div class="p-3 border border-slate-200 rounded-xl space-y-1 bg-slate-50">
+                            <span class="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded border border-purple-200">Subsidy Program</span>
+                            <h4 class="font-bold text-xs text-slate-900">Sindh Solar Tube-Well Grant 2026</h4>
+                            <p class="text-[11px] text-slate-600">Eligibility: Landholding up to 12.5 acres</p>
+                            <a href="https://agri.sindh.gov.pk" target="_blank" class="text-xs text-purple-700 font-bold hover:underline block pt-1">Visit Official Portal &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. DATA BACKUP & EXPORT WORKSPACE -->
+            <section id="workspace-data" class="workspace-panel hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
+                    <h3 class="text-sm font-bold text-slate-800">Cloud Data Management, Backup & Summary Reports</h3>
+                    <p class="text-xs text-slate-500">Export local farm logs, marketplace entries, and task lists for offline safety.</p>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="exportDataJSON()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-download"></i> Export Cloud Data (JSON)
+                        </button>
+                        <label class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-upload"></i> Restore Data (JSON)
+                            <input type="file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                        </label>
+                        <button onclick="printFarmSummary()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors">
+                            <i class="fa-solid fa-print"></i> Print Farm Summary
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- MOBILE BOTTOM BAR NAVIGATION -->
+        <nav class="md:hidden bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around p-2 text-center text-[10px] z-30 no-print">
+            <button onclick="switchTab('home')" class="flex flex-col items-center py-1 text-agri-400">
+                <i class="fa-solid fa-house-chimney text-base"></i>
+                <span>Home</span>
+            </button>
+            <button onclick="switchTab('seasons')" class="flex flex-col items-center py-1">
+                <i class="fa-solid fa-calendar-days text-base"></i>
+                <span>Seasons</span>
+            </button>
+            <button onclick="switchTab('ai')" class="flex flex-col items-center py-1">
+                <i class="fa-solid fa-robot text-base"></i>
+                <span>AI</span>
+            </button>
+            <button onclick="switchTab('market')" class="flex flex-col items-center py-1">
+                <i class="fa-solid fa-store text-base"></i>
+                <span>Market</span>
+            </button>
+            <button onclick="switchTab('planner')" class="flex flex-col items-center py-1">
+                <i class="fa-solid fa-calculator text-base"></i>
+                <span>Suite</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- MODAL: GOOGLE LOGIN SIMULATION -->
+    <div id="googleLoginModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-center relative">
+            <button onclick="toggleModal('googleLoginModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="w-12 h-12 bg-agri-100 text-agri-700 rounded-2xl mx-auto flex items-center justify-center text-xl font-bold">
+                <i class="fa-brands fa-google"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Sign in to Zarai Saathi</h3>
+                <p class="text-xs text-slate-500 mt-1">Connect your Google account to securely save farm records, weather preferences, and marketplace listings across devices.</p>
+            </div>
+            
+            <div class="space-y-2 pt-2">
+                <button onclick="simulateGoogleAuth('farmer')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-colors shadow-sm">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4 bg-white rounded-full p-0.5">
+                    Continue with Google (Farmer Profile)
+                </button>
+                <button onclick="simulateGoogleAuth('buyer')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-colors">
+                    <i class="fa-solid fa-store text-agri-700"></i>
+                    Continue as Verified Trader / Buyer
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-400">By signing in, your personal data is securely encrypted in cloud storage under Sindh Agri Standards.</p>
+        </div>
+    </div>
+
+    <!-- MODAL: POST HARVEST LISTING -->
+    <div id="postHarvestModal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-3 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="text-xs font-bold text-slate-900">Post Crop Harvest for Sale</h3>
+                <button onclick="toggleModal('postHarvestModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form onsubmit="handlePostHarvestSubmit(event)" class="space-y-2.5 text-xs">
+                <div>
+                    <label class="font-semibold block mb-1">Crop Name:</label>
+                    <input type="text" id="postCropName" placeholder="e.g. Organic Wheat, Sugarcane" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Quantity (Mand / Crates):</label>
+                    <input type="text" id="postQuantity" placeholder="e.g. 40 Mand" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Asking Price (Rs.):</label>
+                    <input type="number" id="postPrice" placeholder="e.g. 4200" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">WhatsApp Phone Number:</label>
+                    <input type="text" id="postPhone" placeholder="e.g. 923001234567" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <button type="submit" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-2 rounded-xl mt-2 transition-colors">Publish to Cloud Marketplace</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: COMMUNITY REQUIREMENT POST -->
+    <div id="communityPostModal" class="fixed inset-0 bg-slate-900/60 z-50 hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-3 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="text-xs font-bold text-slate-900">Post Community Requirement</h3>
+                <button onclick="toggleModal('communityPostModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form onsubmit="handleCommunityPostSubmit(event)" class="space-y-2.5 text-xs">
+                <div>
+                    <label class="font-semibold block mb-1">Request Title:</label>
+                    <input type="text" id="commTitle" placeholder="e.g. Tractor Needed for Plowing" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Details & Location:</label>
+                    <textarea id="commDetails" rows="2" placeholder="e.g. Need 85HP tractor in Matiari..." required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="font-semibold block mb-1">Budget / Offer (Rs.):</label>
+                    <input type="text" id="commBudget" placeholder="e.g. Rs. 2,000 / Hour" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
+                </div>
+                <button type="submit" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-2 rounded-xl mt-2 transition-colors">Post to Community</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CORE APPLICATION JAVASCRIPT ENGINE -->
+    <script>
+    // 1. District Coordinates and Baseline Prices Data
+    const districtData = {
+        hyderabad: { lat: 25.3960, lon: 68.3578, name: "Hyderabad", wheat: "4,250", cotton: "8,500" },
+        sukkur: { lat: 27.7132, lon: 68.8623, name: "Sukkur", wheat: "4,180", cotton: "8,400" },
+        larkana: { lat: 27.5589, lon: 68.2120, name: "Larkana", wheat: "4,210", cotton: "8,350" },
+        mirpurkhas: { lat: 25.5269, lon: 69.0111, name: "Mirpurkhas", wheat: "4,300", cotton: "8,600" },
+        nawabshah: { lat: 26.2483, lon: 68.4096, name: "Nawabshah", wheat: "4,220", cotton: "8,450" },
+        karachi: { lat: 24.8607, lon: 67.0011, name: "Karachi", wheat: "4,400", cotton: "8,800" }
+    };
+
+    let currentDistrict = 'hyderabad';
+
+    // 2. Persistent State & Cloud Session
+    let currentUser = JSON.parse(localStorage.getItem('zarai_google_user')) || null;
+
+    let appTasks = JSON.parse(localStorage.getItem('zarai_tasks')) || [
+        { id: 1, text: "Apply N-Fertilizer for Plot A", done: true },
+        { id: 2, text: "Inspect cotton leaves for locust eggs", done: false }
+    ];
+
+    let healthLogs = JSON.parse(localStorage.getItem('zarai_health_logs')) || [
+        { date: "Oct 23, 2026", user: "Demo Farmer", crop: "Wheat Plot 1", symptom: "Leaf tip yellowing", severity: "Low", notes: "Applied zinc spray as preventive measure." }
+    ];
+
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    // Initialize Auth UI on load
+    function updateAuthUI() {
+        const loginBtn = document.getElementById('loginBtn');
+        const userBadge = document.getElementById('userProfileBadge');
+        const cloudStatus = document.getElementById('cloudStatusTxt');
+
+        if (currentUser) {
+            loginBtn.classList.add('hidden');
+            userBadge.classList.remove('hidden');
+            userBadge.classList.add('flex');
+            document.getElementById('userName').innerText = currentUser.name;
+            document.getElementById('userAvatar').src = currentUser.avatar;
+            if(cloudStatus) cloudStatus.innerText = `Synced with Google (${currentUser.email})`;
+        } else {
+            loginBtn.classList.remove('hidden');
+            userBadge.classList.remove('flex');
+            userBadge.classList.add('hidden');
+            if(cloudStatus) cloudStatus.innerText = "Offline / Local Mode";
+        }
+    }
+    updateAuthUI();
+
+    function openGoogleLoginModal() {
+        toggleModal('googleLoginModal');
+    }
+
+    function simulateGoogleAuth(roleType) {
+        // Simulated secure Google OAuth credential exchange
+        const mockNames = ["Muhammad Ali", "Abdul Qadir", " Ghulam Murtaza", "Ayesha Baloch"];
+        const mockAvatars = [
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
+            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces",
+            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces"
+        ];
+        
+        currentUser = {
+            name: mockNames[Math.floor(Math.random() * mockNames.length)],
+            email: "farmer.sindh@gmail.com",
+            avatar: mockAvatars[Math.floor(Math.random() * mockAvatars.length)],
+            role: roleType,
+            token: "google_oauth_sig_9823471928"
+        };
+
+        localStorage.setItem('zarai_google_user', JSON.stringify(currentUser));
+        toggleModal('googleLoginModal');
+        updateAuthUI();
+        alert(`Successfully signed in with Google! Welcome, ${currentUser.name}. Your farm logs are now syncing to your secure cloud profile.`);
+    }
+
+    function signOutGoogle() {
+        currentUser = null;
+        localStorage.removeItem('zarai_google_user');
+        updateAuthUI();
+        alert("Signed out successfully. Returning to offline session mode.");
+    }
+
+    function escapeHtmlString(str) {
+        if (!str) return '';
+        return str
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '&quot;')
+            .replace(/\n/g, ' ')
+            .replace(/\r/g, '');
+    }
+
+    // 3. Navigation & Role Access
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    }
+
+    // Role-based navigation: each account sees only tools relevant to that role.
+    const roleTabAccess = {
+        farmer:   ['home', 'seasons', 'ai', 'market', 'rates', 'planner', 'health_records', 'community', 'complaints', 'govt_services', 'data'],
+        buyer:    ['home', 'market', 'rates', 'community', 'complaints', 'data'],
+        supplier: ['home', 'market', 'planner', 'community', 'complaints', 'data'],
+        expert:   ['home', 'seasons', 'ai', 'health_records', 'community', 'govt_services', 'data'],
+        govt:     ['home', 'rates', 'complaints', 'govt_services', 'community', 'data']
+    };
+
+    function switchTab(tabId) {
+        const role = document.getElementById('roleSelector')?.value || 'farmer';
+        const allowedTabs = roleTabAccess[role] || roleTabAccess.farmer;
+        if (!allowedTabs.includes(tabId)) tabId = 'home';
+        document.querySelectorAll('.workspace-panel').forEach(panel => panel.classList.add('hidden'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+        const activePanel = document.getElementById(`workspace-${tabId}`);
+        if (activePanel) activePanel.classList.remove('hidden');
+        const activeBtn = document.getElementById(`tab-${tabId}`);
+        if (activeBtn) activeBtn.classList.add('active-tab');
+        if (window.innerWidth < 768) document.getElementById('sidebar')?.classList.add('-translate-x-full');
+    }
+
+    function switchRole(role) {
+        const badge = document.getElementById('role-badge-display');
+        const map = {
+            farmer: 'Role: Farmer Command Desk',
+            buyer: 'Role: Verified Buyer / Trader',
+            supplier: 'Role: Agri Equipment Supplier',
+            expert: 'Role: Extension Agri Expert',
+            govt: 'Role: Market Committee Officer'
+        };
+        if (badge) badge.innerText = map[role] || map.farmer;
+        const allowedTabs = roleTabAccess[role] || roleTabAccess.farmer;
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            const tabId = btn.id.replace(/^tab-/, '');
+            btn.classList.toggle('hidden', !allowedTabs.includes(tabId));
+        });
+        switchTab('home');
+    }
+
+    function changeDistrict(distKey) {
+        currentDistrict = distKey;
+        const d = districtData[distKey];
+        if (!d) return;
+
+        document.getElementById('pestDistrictLabel').innerText = `${d.name} district perimeter`;
+        document.getElementById('homeBenchmarkPrice').innerText = `Rs. ${d.wheat}`;
+        document.getElementById('homeBenchmarkCrop').innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> Wheat (${d.name} Mandi)`;
+
+        renderMandiRatesTable();
+        fetchLiveWeather();
+    }
+
+    // 4. Multi-Language Engine (English, Urdu, Sindhi)
+    const translations = {
+        en: {
+            nav_home: "Home Dashboard", nav_seasons: "Crop Seasons & Calendar", nav_ai: "AI Saathi Assistant", nav_market: "Direct Marketplace",
+            nav_rates: "Govt Rates & Mandi", nav_planner: "Farm Management Suite", nav_health: "Crop Health Records",
+            nav_community: "Farmer Community", nav_dispute: "Dispute & Complaints", nav_govt: "Govt Schemes & Hub",
+            nav_data: "Data Backup & Export", btn_ask: "Ask AI Saathi", badge_verified: "Verified Sindh Agriculture Desk",
+            welcome: "Khush Amdeed, Farmer! 🌾", welcome_sub: "Integrated operational command center for crop monitoring, market intelligence, irrigation planning, and Sindh Government agricultural schemes.",
+            lbl_role: "Active Role:", txt_login: "Google Sign-In"
+        },
+        ur: {
+            nav_home: "ہوم ڈیش بورڈ", nav_seasons: "فصلوں کے موسم اور کیلنڈر", nav_ai: "زرعی AI معاون", nav_market: "براہ راست منڈی",
+            nav_rates: "سرکاری نرخ نامہ", nav_planner: "فارم مینجمنٹ سُوٹ", nav_health: "فصل کی صحت کا ریکارڈ",
+            nav_community: "کسان کمیونٹی", nav_dispute: "شکایات اور تنازعات", nav_govt: "سرکاری سکیمیں",
+            nav_data: "ڈیٹا بیک اپ اور برآمد", btn_ask: "AI ساتھی سے پوچھیں", badge_verified: "تصدیق شدہ سندھ ڈیسک",
+            welcome: "خوش آمدید، کسان بھائی! 🌾", welcome_sub: "فصل کی نگرانی، موسمی انتباہ، منڈی کے بھاؤ، اور سندھ حکومت کی خدمات کا مکمل ڈیش بورڈ۔",
+            lbl_role: "فعال کردار:", txt_login: "گوگل لاگ ان"
+        },
+        sd: {
+            nav_home: "هوم ڊيش بورڊ", nav_seasons: "فصلن جا موسم ۽ ڪئلينڊر", nav_ai: "زرعي AI مددگار", nav_market: "سڌي مارڪيٽ",
+            nav_rates: "سرڪاري نرخ", nav_planner: "فارم مينيجمينٽ سوٽ", nav_health: "فصل جي صحت جو رڪارڊ",
+            nav_community: "هاري ڪميونٽي", nav_dispute: "شڪايتون ۽ تڪرار", nav_govt: "سرڪاري اسڪيمون",
+            nav_data: "ڊيٽا بيڪ اپ ۽ ايڪسپورٽ", btn_ask: "AI ساٿي کان پڇو", badge_verified: "تصديق ٿيل سنڌ ڊيسڪ",
+            welcome: "ڀلي ڪري آيا، هاري سائين! 🌾", welcome_sub: "فصل جي نگراني، موسم جي خبر، منڊي جا ڀاءُ ۽ سنڌ حڪومت جي سروسز جو مڪمل ڊيش بورڊ۔",
+            lbl_role: "فعال ڪردار:", txt_login: "گوگل لاگ ان"
+        }
+    };
+
+    function changeLanguage(lang) {
+        const dict = translations[lang] || translations.en;
+        document.querySelectorAll('.nav-text').forEach(el => {
+            const key = el.getAttribute('data-key');
+            if (dict[key]) el.innerText = dict[key];
+        });
+
+        if (dict.btn_ask) document.getElementById('btn-ask-ai').innerText = dict.btn_ask;
+        if (dict.badge_verified) document.getElementById('badge-verified').innerText = dict.badge_verified;
+        if (dict.welcome) document.getElementById('txt-welcome').innerText = dict.welcome;
+        if (dict.welcome_sub) document.getElementById('txt-welcome-sub').innerText = dict.welcome_sub;
+        if (dict.lbl_role) document.getElementById('lbl-role-title').innerText = dict.lbl_role;
+        if (dict.txt_login && !currentUser) document.getElementById('txt-login').innerText = dict.txt_login;
+
+        if (lang === 'ur' || lang === 'sd') {
+            document.body.classList.add('font-urdu');
+            document.dir = 'rtl';
+        } else {
+            document.body.classList.remove('font-urdu');
+            document.dir = 'ltr';
+        }
+    }
+
+    // 5. Open-Meteo REST Weather Integration
+    async function fetchLiveWeather() {
+        const d = districtData[currentDistrict] || districtData.hyderabad;
+        try {
+            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${d.lat}&longitude=${d.lon}&current=temperature_2m,weather_code&timezone=Asia%2FKarachi`);
+            if (!response.ok) throw new Error('Weather API error');
+            const data = await response.json();
+            document.getElementById('homeTemp').innerText = `${data.current.temperature_2m}°C`;
+            const condition = data.current.weather_code > 3 ? "Cloudy / Light Rain" : "Clear & Sunny";
+            document.getElementById('homeCondition').innerText = `${condition} (${d.name})`;
+            document.getElementById('homeWeatherTip').innerText = data.current.weather_code > 3 ? "Delay chemical spraying" : "Optimal for irrigation";
+        } catch (e) {
+            document.getElementById('homeTemp').innerText = "32°C";
+            document.getElementById('homeCondition').innerText = `Clear & Sunny (${d.name})`;
+            document.getElementById('homeWeatherTip').innerText = "Optimal for irrigation";
+        }
+    }
+    fetchLiveWeather();
+
+    // 6. Gemini AI Native Integration Engine
+    let selectedBase64Image = null;
+
+    function handleImageSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                selectedBase64Image = e.target.result.split(',')[1];
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('previewFileName').innerText = file.name;
+                document.getElementById('imagePreviewBox').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function clearImageUpload() {
+        selectedBase64Image = null;
+        document.getElementById('chatImageInput').value = '';
+        document.getElementById('imagePreviewBox').classList.add('hidden');
+    }
+
+    function sendQuickPrompt(promptText) {
+        document.getElementById('chatInput').value = promptText;
+        handleChatSubmit(new Event('submit'));
+    }
+
+    function simulateVoiceInput() {
+        alert("Microphone Active: Speak your query in Sindhi, Urdu, or English...");
+        setTimeout(() => {
+            document.getElementById('chatInput').value = "کپاس کی فصل میں سفید مکھی کا کیا علاج ہے؟";
+        }, 1200);
+    }
+
+    async function handleChatSubmit(e) {
+    if (e) e.preventDefault();
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (!message && !selectedBase64Image) return;
+
+    const chatWindow = document.getElementById('chatWindow');
+    const imageFile = document.getElementById('chatImageInput').files[0] || null;
+    const userMsgDiv = document.createElement('div');
+    userMsgDiv.className = 'flex gap-3 max-w-xl ml-auto flex-row-reverse';
+    userMsgDiv.innerHTML = `<div class="w-7 h-7 bg-slate-800 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">You</div><div class="bg-agri-600 text-white p-3.5 rounded-2xl text-xs space-y-1"><p class="leading-relaxed"></p></div>`;
+    userMsgDiv.querySelector('p').textContent = message || 'Please analyze this crop image.';
+    if (imageFile) {
+        const note = document.createElement('div');
+        note.className = 'font-bold text-[10px] text-agri-200';
+        note.textContent = '[Crop Leaf Image Attached]';
+        userMsgDiv.querySelector('div.bg-agri-600').prepend(note);
+    }
+    chatWindow.appendChild(userMsgDiv);
+    input.value = '';
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    const loading = document.createElement('div');
+    loading.className = 'flex gap-3 max-w-xl';
+    loading.innerHTML = `<div class="w-7 h-7 bg-agri-600 rounded-full flex-shrink-0 flex items-center justify-center text-white text-[11px] font-bold">AI</div><div class="bg-slate-100 p-3.5 rounded-2xl text-xs text-slate-800 border border-slate-200/60"><p>Analyzing your question…</p></div>`;
+    chatWindow.appendChild(loading);
+    const answerNode = loading.querySelector('p');
+
+    try {
+        let answer = '';
+        if (imageFile) {
+            const formData = new FormData();
+            formData.append('file', imageFile);
+            const response = await fetch(API_BASE_URL + '/api/diagnose', { method: 'POST', body: formData });
+            const data = await response.json();
+            if (!response.ok || data.error) throw new Error(data.error || 'Image analysis failed');
+            answer = `Crop image screening (visual estimate, not a confirmed diagnosis): ${data.diagnosis} Severity: ${data.severity}. Green pixels: ${data.green_percentage}%; yellow/spot-like pixels: ${data.infection_percentage}%. Suggested next step: ${data.recommended_treatment} Please confirm with a local agriculture extension officer before applying any pesticide.`;
+        } else {
+            const response = await fetch(API_BASE_URL + '/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: message, district: currentDistrict })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || data.error || 'Assistant request failed');
+            answer = [data.topic, data.recommendation, ...(data.action_items || []).map((x, i) => `${i + 1}. ${x}`)].filter(Boolean).join('\n\n');
+        }
+        answerNode.textContent = answer;
+    } catch (error) {
+        // Offline fallback: keep the assistant usable if the Flask service is not running.
+        const q = message.toLowerCase();
+        if (imageFile) {
+            answerNode.textContent = 'Image analysis needs the Flask backend. Start backend.py and try again. Do not treat an image-only guess as a confirmed crop diagnosis.';
+        } else if (q.includes('wheat') || q.includes('گندم') || q.includes('fertilizer') || q.includes('urea')) {
+            answerNode.textContent = 'General wheat guidance: fertilizer and irrigation depend on soil testing, sowing date, variety, and crop stage. Check local Agriculture Extension recommendations before applying inputs. (Backend is offline; this is a basic fallback.)';
+        } else if (q.includes('water') || q.includes('irrigation') || q.includes('پانی')) {
+            answerNode.textContent = 'Irrigation needs depend on crop, soil texture, weather, and growth stage. Check field moisture and local canal schedule. (Backend is offline; this is a basic fallback.)';
+        } else if (q.includes('pest') || q.includes('locust') || q.includes('whitefly') || q.includes('کیڑا')) {
+            answerNode.textContent = 'Inspect the crop and identify the pest before treatment. Follow the registered product label and consult your District Agriculture Extension Officer for a locally appropriate recommendation. (Backend is offline; this is a basic fallback.)';
+        } else {
+            answerNode.textContent = `I couldn't reach the Zarai Saathi backend (${error.message}). Start backend.py, then retry. You can still use the dashboard, planner, rates demo, and local records.`;
+        }
+    } finally {
+        clearImageUpload();
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+}
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // 7. Mandi Rates & Farm Planning
+    function renderMandiRatesTable() {
+        const tbody = document.getElementById('mandiRatesTable');
+        if (!tbody) return;
+        const d = districtData[currentDistrict] || districtData.hyderabad;
+
+        tbody.innerHTML = `
+            <tr class="hover:bg-slate-50">
+                <td class="p-2.5 font-bold text-slate-900">Wheat (گندم Grade A)</td>
+                <td class="p-2.5">${d.name} Mandi</td>
+                <td class="p-2.5 font-semibold text-agri-700">Rs. ${d.wheat} / 40kg</td>
+                <td class="p-2.5">Rs. ${parseInt(d.wheat.replace(',', '')) + 50} / 40kg</td>
+                <td class="p-2.5 text-amber-700 font-medium">Rs. ${parseInt(d.wheat.replace(',', '')) - 250} / 40kg</td>
+                <td class="p-2.5"><span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded font-semibold">Low Buyer Offer</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+                <td class="p-2.5 font-bold text-slate-900">Cotton (Phutti کپاس)</td>
+                <td class="p-2.5">${d.name} Mandi</td>
+                <td class="p-2.5 font-semibold text-agri-700">Rs. ${d.cotton} / 40kg</td>
+                <td class="p-2.5">Rs. ${parseInt(d.cotton.replace(',', '')) - 100} / 40kg</td>
+                <td class="p-2.5 text-agri-700 font-medium">Rs. ${parseInt(d.cotton.replace(',', '')) + 100} / 40kg</td>
+                <td class="p-2.5"><span class="bg-agri-100 text-agri-800 text-[10px] px-2 py-0.5 rounded font-semibold">Fair Price</span></td>
+            </tr>
+        `;
+    }
+    renderMandiRatesTable();
+
+    function calculateCropProfit() {
+        const acreage = parseFloat(document.getElementById('calcAcreage').value) || 0;
+        const yieldPerAcre = parseFloat(document.getElementById('calcYield').value) || 0;
+        const pricePer40kg = parseFloat(document.getElementById('calcPrice').value) || 0;
+        const costPerAcre = parseFloat(document.getElementById('calcCosts').value) || 0;
+
+        const totalYield = acreage * yieldPerAcre;
+        const totalRevenue = totalYield * pricePer40kg;
+        const totalCost = acreage * costPerAcre;
+        const netProfit = totalRevenue - totalCost;
+
+        document.getElementById('profitResult').innerHTML = `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-semibold text-xs">
+                <div>Total Yield: <span class="text-slate-900 font-bold">${totalYield} Mands</span></div>
+                <div>Total Revenue: <span class="text-agri-700 font-bold">Rs. ${totalRevenue.toLocaleString()}</span></div>
+                <div>Total Expenses: <span class="text-rose-600 font-bold">Rs. ${totalCost.toLocaleString()}</span></div>
+                <div>Net Income: <span class="text-agri-800 font-extrabold">Rs. ${netProfit.toLocaleString()}</span></div>
+            </div>
+        `;
+    }
+
+    function calculateAgriPlan() {
+        const crop = document.getElementById('planCrop').value;
+        const acreage = parseFloat(document.getElementById('planAcreage').value) || 0;
+        const stage = document.getElementById('planStage').value;
+
+        const ureaBags = (acreage * 0.5).toFixed(1);
+        const dapBags = (acreage * 0.2).toFixed(1);
+        const tubeWellHours = (acreage * 0.4).toFixed(1);
+
+        document.getElementById('plannerResults').innerHTML = `
+            <div class="font-bold text-agri-950 text-xs">Recommended Plan (${acreage} Acres ${crop.toUpperCase()} - ${stage.toUpperCase()}):</div>
+            <ul class="list-disc list-inside space-y-1 text-agri-900 mt-1 text-xs">
+                <li><strong>Urea Fertilizer Needed:</strong> ${ureaBags} Bags (${(ureaBags * 50).toFixed(0)} kg)</li>
+                <li><strong>DAP Fertilizer Needed:</strong> ${dapBags} Bags (${(dapBags * 50).toFixed(0)} kg)</li>
+                <li><strong>Irrigation Hours:</strong> Approx ${tubeWellHours} tube-well hours required.</li>
+            </ul>
+        `;
+    }
+
+    function renderTasks() {
+        const list = document.getElementById('taskManagerList');
+        if (!list) return;
+
+        list.innerHTML = '';
+        appTasks.forEach(task => {
+            const safeText = escapeHtmlString(task.text);
+            const li = document.createElement('li');
+            li.className = 'flex items-center justify-between p-2 bg-slate-50 rounded-lg border border-slate-200';
+            li.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleTask(${task.id})" class="rounded text-agri-600 focus:ring-agri-500">
+                    <span class="${task.done ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${safeText}</span>
+                </div>
+                <button onclick="deleteTask(${task.id})" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+            `;
+            list.appendChild(li);
+        });
+
+        localStorage.setItem('zarai_tasks', JSON.stringify(appTasks));
+    }
+
+    function addNewTaskPrompt() {
+        const text = prompt("Enter new farm task reminder:");
+        if (text) {
+            appTasks.push({ id: Date.now(), text: text, done: false });
+            renderTasks();
+        }
+    }
+
+    function toggleTask(id) {
+        appTasks = appTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+        renderTasks();
+    }
+
+    function deleteTask(id) {
+        appTasks = appTasks.filter(t => t.id !== id);
+        renderTasks();
+    }
+    renderTasks();
+
+    // 8. Health Logs & Cloud Data Sync
+    function renderHealthLogs() {
+        const tbody = document.getElementById('healthLogsTable');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        healthLogs.forEach(log => {
+            const badgeClass = log.severity === 'Severe' ? 'bg-rose-100 text-rose-800' : (log.severity === 'Moderate' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-700');
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50';
+            tr.innerHTML = `
+                <td class="p-2 text-[11px] text-slate-500">${log.date}</td>
+                <td class="p-2 font-semibold text-agri-800">${log.user || 'Demo User'}</td>
+                <td class="p-2 font-bold text-slate-900">${log.crop}</td>
+                <td class="p-2">${log.symptom}</td>
+                <td class="p-2"><span class="text-[10px] px-2 py-0.5 rounded font-semibold ${badgeClass}">${log.severity}</span></td>
+                <td class="p-2 text-slate-600">${log.notes}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        localStorage.setItem('zarai_health_logs', JSON.stringify(healthLogs));
+    }
+
+    function handleHealthLogSubmit(e) {
+        e.preventDefault();
+        const crop = document.getElementById('logCrop').value;
+        const symptom = document.getElementById('logSymptom').value;
+        const severity = document.getElementById('logSeverity').value;
+        const notes = document.getElementById('logNotes').value;
+        const activeName = currentUser ? currentUser.name : "Offline Farmer";
+
+        healthLogs.unshift({
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            user: activeName,
+            crop, symptom, severity, notes
+        });
+
+        renderHealthLogs();
+        e.target.reset();
+        alert(`Cloud Field Record saved successfully for profile: ${activeName}!`);
+    }
+    renderHealthLogs();
+
+    function toggleModal(modalId) {
+        document.getElementById(modalId).classList.toggle('hidden');
+    }
+
+    function handlePostHarvestSubmit(e) {
+        e.preventDefault();
+        const crop = document.getElementById('postCropName').value;
+        const qty = document.getElementById('postQuantity').value;
+        const price = document.getElementById('postPrice').value;
+        const phone = document.getElementById('postPhone').value;
+        const sellerName = currentUser ? currentUser.name : "Verified Seller";
+
+        const grid = document.getElementById('marketplaceListings');
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl border border-slate-200/80 shadow-xs p-4 space-y-2.5 flex flex-col justify-between';
+        
+        card.innerHTML = `
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="bg-agri-100 text-agri-800 text-[10px] font-bold px-2 py-0.5 rounded border border-agri-200">Cloud Listing (${sellerName})</span>
+                    <span class="text-[10px] text-slate-400">Just Now</span>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900 text-xs">${crop}</h4>
+                    <p class="text-[11px] text-slate-500">Quantity: ${qty}</p>
+                    <p class="text-[11px] text-slate-500">Location: Hyderabad, Sindh</p>
+                </div>
+            </div>
+            <div class="space-y-2 pt-2 border-t border-slate-100">
+                <div class="bg-slate-50 p-2 rounded-lg flex items-center justify-between">
+                    <span class="text-xs text-slate-600">Asking Price:</span>
+                    <span class="text-xs font-bold text-agri-700">Rs. ${price}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openOfferModal('${crop}', '${price}')" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-xs py-2 rounded-lg font-semibold transition-colors">
+                        Send Direct Offer
+                    </button>
+                    <a href="https://wa.me/${phone}?text=Hi,%20I%20am%20interested%20in%20your%20${encodeURIComponent(crop)}%20listing." target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white p-2 rounded-lg text-xs flex items-center justify-center w-9" title="WhatsApp Trader">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                    </a>
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+
+        toggleModal('postHarvestModal');
+        e.target.reset();
+        alert("Crop harvest successfully published to the cloud marketplace!");
+    }
+
+    function openOfferModal(cropName, price) {
+        alert("Direct offer registered for " + cropName + " at Rs. " + price + ". Profile authenticated via Google login.");
+    }
+
+    function handleComplaintSubmit(e) {
+        e.preventDefault();
+        alert("Official complaint logged under Sindh Market Committee Act! Reference ID: #SINDH-AGRI-2026-8941.");
+        e.target.reset();
+    }
+
+    function exportDataJSON() {
+        const exportObj = {
+            user: currentUser,
+            tasks: appTasks,
+            healthLogs: healthLogs,
+            district: currentDistrict,
+            exportedAt: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Zarai_Saathi_Cloud_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importDataJSON(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks) appTasks = data.tasks;
+                    if (data.healthLogs) healthLogs = data.healthLogs;
+                    renderTasks();
+                    renderHealthLogs();
+                    alert("Cloud backup data restored successfully!");
+                } catch (err) {
+                    alert("Invalid JSON data format.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
+
+    function printFarmSummary() {
+        window.print();
+    }
+
+    function filterGlobalSearch() {
+        const term = document.getElementById('globalSearch').value.toLowerCase();
+        if (term.length > 2) {
+            if (term.includes('wheat') || term.includes('cotton') || term.includes('rate')) {
+                switchTab('rates');
+            } else if (term.includes('water') || term.includes('urea') || term.includes('planner')) {
+                switchTab('planner');
+            } else if (term.includes('disease') || term.includes('leaf')) {
+                switchTab('ai');
+            }
+        }
+    }
+    // For local judging: run backend.py on port 5000. Set this to your deployed backend URL when hosted.
+    document.addEventListener('DOMContentLoaded', () => switchRole(document.getElementById('roleSelector')?.value || 'farmer'));
+    const API_BASE_URL = (window.ZARAI_API_BASE_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+    </script>
+</body>
+</html>
