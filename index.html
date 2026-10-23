@@ -173,7 +173,7 @@
                 <div id="authContainer" class="flex items-center">
                     <button onclick="openGoogleLoginModal()" id="loginBtn" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-3.5 py-2 rounded-xl font-semibold shadow-xs flex items-center gap-2 transition-colors">
                         <i class="fa-brands fa-google text-emerald-400"></i>
-                        <span id="txt-login">Google Sign-In</span>
+                        <span id="txt-login">Demo Profile</span>
                     </button>
                     
                     <div id="userProfileBadge" class="hidden items-center gap-2 bg-agri-50 border border-agri-200 px-3 py-1 rounded-xl">
@@ -259,7 +259,7 @@
                         </div>
                         <div>
                             <div class="text-xs font-bold text-agri-800" id="cloudStatusTxt">Offline / Local Mode</div>
-                            <div class="text-[11px] text-slate-500">Sign in with Google to sync cloud records</div>
+                            <div class="text-[11px] text-slate-500">Records are saved in this browser. Cloud sync needs a backend.</div>
                         </div>
                         <button onclick="openGoogleLoginModal()" class="mt-2.5 text-left text-xs text-agri-700 font-bold hover:underline flex items-center gap-1">
                             Connect Google Profile <i class="fa-solid fa-arrow-right text-[10px]"></i>
@@ -283,7 +283,7 @@
                         <button onclick="switchTab('health_records')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
                             <i class="fa-solid fa-notes-medical text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
                             <div class="text-xs font-bold text-agri-950">Log Health Record</div>
-                            <div class="text-[10px] text-agri-700">Cloud Sync Active</div>
+                            <div class="text-[10px] text-agri-700">Saved in this browser</div>
                         </button>
                         <button onclick="switchTab('govt_services')" class="p-3 bg-agri-50 border border-agri-100 rounded-xl hover:bg-agri-100 transition-colors text-left group">
                             <i class="fa-solid fa-seedling text-agri-600 text-base mb-1 group-hover:scale-110 transition-transform"></i>
@@ -349,11 +349,11 @@
                             </div>
                             <div>
                                 <h3 class="text-xs font-bold text-slate-800" id="ai-header-title">Zarai AI Assistant & Crop Doctor</h3>
-                                <p class="text-[10px] text-slate-500">Gemini Preview API | Multilingual & Vision Enabled</p>
+                                <p class="text-[10px] text-slate-500">Agriculture guidance assistant | API optional</p>
                             </div>
                         </div>
                         <span class="text-[10px] bg-agri-100 text-agri-800 font-semibold px-2.5 py-0.5 rounded-full border border-agri-200">
-                            <i class="fa-solid fa-bolt mr-1 text-agri-600"></i> Gemini-3-Flash Connected
+                            <i class="fa-solid fa-circle-check mr-1 text-agri-600"></i> Local Mode Ready
                         </span>
                     </div>
 
@@ -446,11 +446,11 @@
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                         <div>
-                            <h3 class="text-sm font-bold text-slate-800">Official Govt Rates vs Market Offers</h3>
-                            <p class="text-xs text-slate-500">Notified under Sindh Wholesale Agricultural Produce Markets Act, 2010.</p>
+                            <h3 class="text-sm font-bold text-slate-800">Indicative Demo Rates vs Market Offers</h3>
+                            <p class="text-xs text-slate-500">Illustrative sample values only — verify current rates with the relevant official mandi before trading.</p>
                         </div>
                         <span class="text-[10px] bg-agri-50 text-agri-800 font-semibold px-2.5 py-1 rounded-lg border border-agri-200">
-                            Source: Sindh Wholesale Market Board
+                            Sample data — not a live official feed
                         </span>
                     </div>
 
@@ -579,12 +579,12 @@
                             <textarea id="logNotes" rows="2" placeholder="Note spray applied, water adjustment, or expert guidance..." class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 outline-none"></textarea>
                         </div>
                         <button type="submit" class="bg-agri-600 hover:bg-agri-700 text-white font-bold px-4 py-2 rounded-xl transition-colors">
-                            Save Cloud Field Record
+                            Save Field Record
                         </button>
                     </form>
 
                     <div class="pt-2">
-                        <h4 class="text-xs font-bold text-slate-800 mb-2">Cloud-Synced Diagnostic Logs</h4>
+                        <h4 class="text-xs font-bold text-slate-800 mb-2">Saved Diagnostic Logs</h4>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs border-collapse">
                                 <thead>
@@ -685,12 +685,12 @@
             <!-- 10. DATA BACKUP & EXPORT WORKSPACE -->
             <section id="workspace-data" class="workspace-panel hidden space-y-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-                    <h3 class="text-sm font-bold text-slate-800">Cloud Data Management, Backup & Summary Reports</h3>
-                    <p class="text-xs text-slate-500">Export local farm logs, marketplace entries, and task lists for offline safety.</p>
+                    <h3 class="text-sm font-bold text-slate-800">Local Data Backup, Export & Summary Reports</h3>
+                    <p class="text-xs text-slate-500">This single-file app stores supported records in browser localStorage. Export JSON regularly; clearing browser data may erase records.</p>
 
                     <div class="flex flex-wrap gap-3">
                         <button onclick="exportDataJSON()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-download"></i> Export Cloud Data (JSON)
+                            <i class="fa-solid fa-download"></i> Export Data (JSON)
                         </button>
                         <label class="bg-agri-600 hover:bg-agri-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl cursor-pointer flex items-center gap-2 transition-colors">
                             <i class="fa-solid fa-upload"></i> Restore Data (JSON)
@@ -739,21 +739,21 @@
                 <i class="fa-brands fa-google"></i>
             </div>
             <div>
-                <h3 class="text-base font-extrabold text-slate-900">Sign in to Zarai Saathi</h3>
-                <p class="text-xs text-slate-500 mt-1">Connect your Google account to securely save farm records, weather preferences, and marketplace listings across devices.</p>
+                <h3 class="text-base font-extrabold text-slate-900">Create a Zarai Saathi Demo Profile</h3>
+                <p class="text-xs text-slate-500 mt-1">This standalone version stores records in this browser only. It does not connect to Google or sync across devices.</p>
             </div>
             
             <div class="space-y-2 pt-2">
                 <button onclick="simulateGoogleAuth('farmer')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-colors shadow-sm">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-4 h-4 bg-white rounded-full p-0.5">
-                    Continue with Google (Farmer Profile)
+                    Continue as Demo Farmer
                 </button>
                 <button onclick="simulateGoogleAuth('buyer')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2.5 transition-colors">
                     <i class="fa-solid fa-store text-agri-700"></i>
-                    Continue as Verified Trader / Buyer
+                    Continue as Demo Buyer / Trader
                 </button>
             </div>
-            <p class="text-[10px] text-slate-400">By signing in, your personal data is securely encrypted in cloud storage under Sindh Agri Standards.</p>
+            <p class="text-[10px] text-slate-400">Demo profile only — no Google authentication or cloud storage is provided in this single-file version.</p>
         </div>
     </div>
 
@@ -781,7 +781,7 @@
                     <label class="font-semibold block mb-1">WhatsApp Phone Number:</label>
                     <input type="text" id="postPhone" placeholder="e.g. 923001234567" required class="w-full p-2 bg-slate-100 border border-slate-200 rounded-xl outline-none">
                 </div>
-                <button type="submit" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-2 rounded-xl mt-2 transition-colors">Publish to Cloud Marketplace</button>
+                <button type="submit" class="w-full bg-agri-600 hover:bg-agri-700 text-white font-bold py-2 rounded-xl mt-2 transition-colors">Publish Listing</button>
             </form>
         </div>
     </div>
@@ -826,14 +826,19 @@
     let currentDistrict = 'hyderabad';
 
     // 2. Persistent State & Cloud Session
-    let currentUser = JSON.parse(localStorage.getItem('zarai_google_user')) || null;
+    let currentUser = null;
+    try { currentUser = JSON.parse(localStorage.getItem('zarai_google_user')) || null; } catch (error) { currentUser = null; }
 
-    let appTasks = JSON.parse(localStorage.getItem('zarai_tasks')) || [
+    let appTasks = [];
+    try { appTasks = JSON.parse(localStorage.getItem('zarai_tasks')) || []; } catch (error) { appTasks = []; }
+    if (!appTasks.length) appTasks = [
         { id: 1, text: "Apply N-Fertilizer for Plot A", done: true },
         { id: 2, text: "Inspect cotton leaves for locust eggs", done: false }
     ];
 
-    let healthLogs = JSON.parse(localStorage.getItem('zarai_health_logs')) || [
+    let healthLogs = [];
+    try { healthLogs = JSON.parse(localStorage.getItem('zarai_health_logs')) || []; } catch (error) { healthLogs = []; }
+    if (!healthLogs.length) healthLogs = [
         { date: "Oct 23, 2026", user: "Demo Farmer", crop: "Wheat Plot 1", symptom: "Leaf tip yellowing", severity: "Low", notes: "Applied zinc spray as preventive measure." }
     ];
 
@@ -850,8 +855,8 @@
             userBadge.classList.remove('hidden');
             userBadge.classList.add('flex');
             document.getElementById('userName').innerText = currentUser.name;
-            document.getElementById('userAvatar').src = currentUser.avatar;
-            if(cloudStatus) cloudStatus.innerText = `Synced with Google (${currentUser.email})`;
+            document.getElementById('userAvatar').src = currentUser.avatar || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"%3E%3Crect width="40" height="40" rx="20" fill="%2315803d"/%3E%3Ctext x="20" y="26" font-size="20" text-anchor="middle" fill="white"%3E%3F%3C/text%3E%3C/svg%3E';
+            if(cloudStatus) cloudStatus.innerText = "Local demo profile active";
         } else {
             loginBtn.classList.remove('hidden');
             userBadge.classList.remove('flex');
@@ -866,33 +871,30 @@
     }
 
     function simulateGoogleAuth(roleType) {
-        // Simulated secure Google OAuth credential exchange
-        const mockNames = ["Muhammad Ali", "Abdul Qadir", " Ghulam Murtaza", "Ayesha Baloch"];
-        const mockAvatars = [
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
-            "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces",
-            "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces"
-        ];
-        
+        // Standalone demo profile. Real Google OAuth requires a configured identity provider/backend.
+        const defaultNames = { farmer: 'Demo Farmer', buyer: 'Demo Buyer' };
+        const name = prompt('Enter a display name for this local demo profile:', defaultNames[roleType] || 'Demo User');
+        if (!name || !name.trim()) return;
         currentUser = {
-            name: mockNames[Math.floor(Math.random() * mockNames.length)],
-            email: "farmer.sindh@gmail.com",
-            avatar: mockAvatars[Math.floor(Math.random() * mockAvatars.length)],
+            name: name.trim().slice(0, 80),
+            email: 'Local demo profile',
+            avatar: '',
             role: roleType,
-            token: "google_oauth_sig_9823471928"
+            demo: true
         };
-
-        localStorage.setItem('zarai_google_user', JSON.stringify(currentUser));
+        try { localStorage.setItem('zarai_google_user', JSON.stringify(currentUser)); } catch (error) {}
         toggleModal('googleLoginModal');
         updateAuthUI();
-        alert(`Successfully signed in with Google! Welcome, ${currentUser.name}. Your farm logs are now syncing to your secure cloud profile.`);
+        document.getElementById('roleSelector').value = roleType;
+        switchRole(roleType);
+        alert(`Demo profile active for ${currentUser.name}. This single-file version stores records in this browser only.`);
     }
 
     function signOutGoogle() {
         currentUser = null;
         localStorage.removeItem('zarai_google_user');
         updateAuthUI();
-        alert("Signed out successfully. Returning to offline session mode.");
+        alert("Demo profile signed out. Local farm records remain in this browser.");
     }
 
     function escapeHtmlString(str) {
@@ -947,6 +949,11 @@
             const tabId = btn.id.replace(/^tab-/, '');
             btn.classList.toggle('hidden', !allowedTabs.includes(tabId));
         });
+        document.querySelectorAll('nav.md\:hidden button[onclick*="switchTab"]').forEach(btn => {
+            const match = btn.getAttribute('onclick').match(/switchTab\('([^']+)'\)/);
+            if (match) btn.classList.toggle('hidden', !allowedTabs.includes(match[1]));
+        });
+        try { localStorage.setItem('zarai_active_role', role); } catch (error) {}
         switchTab('home');
     }
 
@@ -1120,7 +1127,7 @@
         // Offline fallback: keep the assistant usable if the Flask service is not running.
         const q = message.toLowerCase();
         if (imageFile) {
-            answerNode.textContent = 'Image analysis needs the Flask backend. Start backend.py and try again. Do not treat an image-only guess as a confirmed crop diagnosis.';
+            answerNode.textContent = 'Automated crop-image analysis is not included in this standalone HTML file. To enable it, deploy a secure backend API and configure window.ZARAI_API_BASE_URL. For now, describe the symptoms in text and consult your local Agriculture Extension Officer before applying pesticides.';
         } else if (q.includes('wheat') || q.includes('گندم') || q.includes('fertilizer') || q.includes('urea')) {
             answerNode.textContent = 'General wheat guidance: fertilizer and irrigation depend on soil testing, sowing date, variety, and crop stage. Check local Agriculture Extension recommendations before applying inputs. (Backend is offline; this is a basic fallback.)';
         } else if (q.includes('water') || q.includes('irrigation') || q.includes('پانی')) {
@@ -1289,7 +1296,7 @@
 
         renderHealthLogs();
         e.target.reset();
-        alert(`Cloud Field Record saved successfully for profile: ${activeName}!`);
+        alert(`Field record saved successfully for profile: ${activeName}!`);
     }
     renderHealthLogs();
 
@@ -1406,8 +1413,15 @@
         }
     }
     // For local judging: run backend.py on port 5000. Set this to your deployed backend URL when hosted.
-    document.addEventListener('DOMContentLoaded', () => switchRole(document.getElementById('roleSelector')?.value || 'farmer'));
-    const API_BASE_URL = (window.ZARAI_API_BASE_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+    document.addEventListener('DOMContentLoaded', () => {
+        let savedRole = 'farmer';
+        try { savedRole = localStorage.getItem('zarai_active_role') || 'farmer'; } catch (error) {}
+        if (!roleTabAccess[savedRole]) savedRole = 'farmer';
+        const selector = document.getElementById('roleSelector');
+        if (selector) selector.value = savedRole;
+        switchRole(savedRole);
+    });
+    const API_BASE_URL = (window.ZARAI_API_BASE_URL || '').replace(/\/$/, '');
     </script>
 </body>
 </html>
