@@ -6,6 +6,11 @@ Image color analysis is heuristic only and must not be treated as a confirmed di
 import os
 import uuid
 from pathlib import Path
+from backend import app
+
+# Vercel serverless WSGI handler entrypoint
+def handler(environ, start_response):
+    return app(environ, start_response)
 
 import cv2
 import numpy as np
